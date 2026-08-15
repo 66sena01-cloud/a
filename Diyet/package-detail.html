@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paket Detayı - SenaFit Nutrition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="package-detail">
+    <section class="section">
+        <div class="container" id="packageDetailContainer"></div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) loadPackageDetail(slug);
+        });
+
+        async function loadPackageDetail(slug) {
+            const container = document.getElementById('packageDetailContainer');
+            container.innerHTML = '<div class="skeleton" style="height:400px;"></div>';
+            try {
+                const packages = await api.getPackages();
+                const pkg = packages.find(p => p.slug === slug);
+                if (!pkg) {
+                    container.innerHTML = '<p>Paket bulunamadı.</p>';
+                    return;
+                }
+                container.innerHTML = `
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;" class="detail-grid">
+                        <div>
+                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" style="border-radius:30px;box-shadow:var(--shadow-hover);" onerror="this.style.display='none'">
+                        </div>
+                        <div>
+                            <span class="package-category">${pkg.category}</span>
+                            <h1>${pkg.name}</h1>
+                            <div class="package-price">₺${pkg.price}</div>
+                            <p>${pkg.description || ''}</p>
+                            <h3>Özellikler</h3>
+                            <ul class="package-features">
+                                ${pkg.features.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                            <p><strong>Süre:</strong> ${pkg.duration || 'Belirtilmemiş'}</p>
+                            <button class="btn" onclick="window.location.href='/checkout.html?slug=${pkg.slug}'">Satın Al / Başvur</button>
+                        </div>
+                    </div>
+                `;
+            } catch (e) {
+                container.innerHTML = '<p>Paket yüklenemedi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

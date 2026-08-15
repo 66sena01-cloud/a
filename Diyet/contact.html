@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İletişim - SenaFit Nutrition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="contact">
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>İLETİŞİM & BAŞVURU</h2>
+                <p>Bilgilerinizi bırakın, size ulaşalım.</p>
+            </div>
+            <div class="reveal" style="max-width:700px;margin:0 auto;">
+                <form id="contactForm" onsubmit="submitContactForm(event)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <div class="form-group"><label>Ad</label><input type="text" name="name" required></div>
+                        <div class="form-group"><label>Soyad</label><input type="text" name="surname" required></div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <div class="form-group"><label>Telefon</label><input type="tel" name="phone"></div>
+                        <div class="form-group"><label>E-posta</label><input type="email" name="email" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hedef</label>
+                        <select name="goal">
+                            <option>Yağ kaybı</option>
+                            <option>Kilo yönetimi</option>
+                            <option>Kas gelişimi</option>
+                            <option>Form geliştirme</option>
+                            <option>Performans</option>
+                            <option>Sağlıklı beslenme</option>
+                            <option>Düzenli egzersiz</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Mesajınız</label><textarea name="note"></textarea></div>
+                    <button type="submit" class="btn">Gönder</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        async function submitContactForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('contactForm');
+            const data = {
+                name: form.name.value,
+                surname: form.surname.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                goal: form.goal.value,
+                note: form.note.value
+            };
+            try {
+                await api.createApplication(data);
+                showToast('Başvurunuz alındı. En kısa sürede dönüş yapılacaktır.', 'success');
+                form.reset();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

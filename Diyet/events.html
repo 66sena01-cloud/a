@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlikler - SenaFit Nutrition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="events">
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>ETKİNLİKLER</h2>
+                <p>Yaklaşan ve geçmiş etkinlikler.</p>
+            </div>
+            <div class="event-grid reveal" id="eventsList"></div>
+        </div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadEvents);
+        async function loadEvents() {
+            const container = document.getElementById('eventsList');
+            container.innerHTML = '<div class="skeleton" style="height:120px;"></div>'.repeat(3);
+            try {
+                const events = await api.getEvents();
+                if (!events.length) {
+                    container.innerHTML = '<p>Şu anda planlanmış bir etkinlik bulunmuyor.</p>';
+                    return;
+                }
+                container.innerHTML = events.map(ev => {
+                    const date = new Date(ev.event_date);
+                    return `
+                        <div class="event-card">
+                            <div class="event-date">
+                                <span class="day">${date.getDate()}</span>
+                                <span class="month">${date.toLocaleString('tr-TR', { month: 'short' })}</span>
+                            </div>
+                            <div class="event-info">
+                                <h3>${ev.title}</h3>
+                                <p>${ev.description || ''}</p>
+                                <p><strong>${ev.event_time || ''}</strong> ${ev.location || ''} ${ev.is_online ? '(Online)' : ''}</p>
+                                ${ev.registration_link ? `<a href="${ev.registration_link}" target="_blank" class="btn btn-outline">Kayıt Ol</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = '<p>Etkinlikler yüklenemedi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
