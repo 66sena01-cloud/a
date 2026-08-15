@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satın Al - SENA FORM</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="checkout">
+    <section class="section">
+        <div class="container" style="max-width:600px;margin:0 auto;">
+            <div class="section-header reveal">
+                <h2>SATIN ALMA</h2>
+                <p>Seçtiğiniz paketi tamamlamak için bilgilerinizi girin.</p>
+            </div>
+            <div id="checkoutPackageInfo" class="reveal" style="background:var(--surface);padding:20px;border-radius:var(--radius);margin-bottom:30px;border:1px solid var(--border);"></div>
+            <form id="checkoutForm" onsubmit="submitCheckout(event)" class="reveal">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group"><label>Ad</label><input type="text" name="name" required></div>
+                    <div class="form-group"><label>Soyad</label><input type="text" name="surname" required></div>
+                </div>
+                <div class="form-group"><label>E-posta</label><input type="email" name="email" required></div>
+                <div class="form-group"><label>Not (opsiyonel)</label><textarea name="note"></textarea></div>
+                <button type="submit" class="btn" style="width:100%;">Satın Al</button>
+            </form>
+        </div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) loadPackageInfo(slug);
+        });
+
+        async function loadPackageInfo(slug) {
+            const container = document.getElementById('checkoutPackageInfo');
+            try {
+                const packages = await api.getPackages();
+                const pkg = packages.find(p => p.slug === slug);
+                if (!pkg) {
+                    container.innerHTML = '<p>Paket bulunamadı.</p>';
+                    return;
+                }
+                container.innerHTML = `
+                    <h3>${pkg.name}</h3>
+                    <p>Kategori: ${pkg.category}</p>
+                    <p>Fiyat: ₺${pkg.price}</p>
+                    <p>Süre: ${pkg.duration || 'Belirtilmemiş'}</p>
+                `;
+                document.getElementById('checkoutForm').dataset.packageId = pkg.id;
+            } catch (e) {
+                container.innerHTML = '<p>Paket yüklenemedi.</p>';
+            }
+        }
+
+        async function submitCheckout(event) {
+            event.preventDefault();
+            const form = document.getElementById('checkoutForm');
+            const packageId = form.dataset.packageId;
+            if (!packageId) {
+                showToast('Paket bilgisi eksik.', 'error');
+                return;
+            }
+            const data = {
+                name: form.name.value,
+                surname: form.surname.value,
+                email: form.email.value,
+                note: form.note.value,
+                package_id: parseInt(packageId)
+            };
+            try {
+                await api.createPurchase(data);
+                showToast('Satın alma talebiniz alındı. Teşekkürler!', 'success');
+                form.reset();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

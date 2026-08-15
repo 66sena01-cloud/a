@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Girişi - SENA FORM</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(59,93,79,0.1), rgba(194,184,165,0.2)); }
+        .login-box { background: var(--surface); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow-hover); width: 100%; max-width: 400px; }
+        .login-box h1 { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Admin Girişi</h1>
+            <form id="loginForm" onsubmit="login(event)">
+                <div class="form-group"><label>E-posta</label><input type="email" name="email" required></div>
+                <div class="form-group"><label>Şifre</label><input type="password" name="password" required></div>
+                <button type="submit" class="btn" style="width:100%;">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+    <script src="/api.js"></script>
+    <script src="/adminApi.js"></script>
+    <script>
+        async function login(event) {
+            event.preventDefault();
+            const form = document.getElementById('loginForm');
+            const email = form.email.value;
+            const password = form.password.value;
+            try {
+                const result = await adminApi.login(email, password);
+                setAuthToken(result.token);
+                window.location.href = '/panel321.html';
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+        if (localStorage.getItem('adminToken')) {
+            window.location.href = '/panel321.html';
+        }
+    </script>
+</body>
+</html>

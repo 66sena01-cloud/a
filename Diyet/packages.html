@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programlar - SENA FORM</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="packages">
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>PROGRAMLAR</h2>
+                <p>Hedefine uygun paketi seç.</p>
+            </div>
+            <div class="filter-bar reveal" style="display:flex;gap:10px;justify-content:center;margin-bottom:40px;">
+                <button class="btn btn-outline filter-btn active" data-category="">Tümü</button>
+                <button class="btn btn-outline filter-btn" data-category="beslenme">Beslenme</button>
+                <button class="btn btn-outline filter-btn" data-category="egzersiz">Egzersiz</button>
+                <button class="btn btn-outline filter-btn" data-category="kombine">Kombine</button>
+            </div>
+            <div class="package-grid reveal" id="allPackages"></div>
+        </div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category') || '';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            loadPackages(category);
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadPackages(btn.dataset.category);
+                });
+            });
+        });
+
+        async function loadPackages(category) {
+            const container = document.getElementById('allPackages');
+            container.innerHTML = '<div class="skeleton" style="height:300px;"></div>'.repeat(3);
+            try {
+                const filters = {};
+                if (category) filters.category = category;
+                const packages = await api.getPackages(filters);
+                if (!packages.length) {
+                    container.innerHTML = '<p>Yakında yeni programlar burada.</p>';
+                    return;
+                }
+                container.innerHTML = packages.map(pkg => `
+                    <div class="package-card ${pkg.is_featured ? 'featured' : ''}">
+                        ${pkg.is_featured ? '<div class="badge">EN POPÜLER</div>' : ''}
+                        <div class="package-image">
+                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" onerror="this.src='/placeholder.jpg'">
+                        </div>
+                        <div class="package-body">
+                            <span class="package-category">${pkg.category}</span>
+                            <h3>${pkg.name}</h3>
+                            <div class="package-price">₺${pkg.price}</div>
+                            <ul class="package-features">${pkg.features.slice(0,3).map(f => `<li>${f}</li>`).join('')}</ul>
+                            <a href="/package-detail.html?slug=${pkg.slug}" class="btn">Detayları Gör</a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p>Paketler yüklenemedi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
