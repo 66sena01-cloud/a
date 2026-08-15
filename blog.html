@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - SenaFit Nutrition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="blog">
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>BLOG</h2>
+                <p>Beslenme ve egzersiz üzerine yazılar.</p>
+            </div>
+            <div class="blog-grid reveal" id="blogList"></div>
+        </div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadBlog);
+        async function loadBlog() {
+            const container = document.getElementById('blogList');
+            container.innerHTML = '<div class="skeleton" style="height:300px;"></div>'.repeat(3);
+            try {
+                const posts = await api.getBlogPosts();
+                if (!posts.length) {
+                    container.innerHTML = '<p>Henüz blog yazısı yok.</p>';
+                    return;
+                }
+                container.innerHTML = posts.map(post => `
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${post.title}" onerror="this.style.display='none'">
+                        </div>
+                        <div class="blog-body">
+                            ${post.category ? `<span class="blog-category">${post.category}</span>` : ''}
+                            <h3>${post.title}</h3>
+                            <p>${post.summary || ''}</p>
+                            <a href="/blog-detail.html?slug=${post.slug}" class="btn btn-secondary">Devamını Oku</a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p>Blog yazıları yüklenemedi.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

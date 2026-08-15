@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Detayı - SenaFit Nutrition</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body data-page="blog-detail">
+    <section class="section">
+        <div class="container" id="blogDetailContainer" style="max-width:800px;margin:0 auto;"></div>
+    </section>
+    <script src="/api.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            if (slug) loadBlogDetail(slug);
+        });
+
+        async function loadBlogDetail(slug) {
+            const container = document.getElementById('blogDetailContainer');
+            container.innerHTML = '<div class="skeleton" style="height:300px;"></div>';
+            try {
+                const post = await api.getBlogPost(slug);
+                container.innerHTML = `
+                    ${post.cover_image ? `<img src="/media/${post.cover_image.replace(/^\/?/, '')}" alt="${post.title}" style="border-radius:30px;margin-bottom:30px;box-shadow:var(--shadow-hover);" onerror="this.style.display='none'">` : ''}
+                    ${post.category ? `<span class="blog-category">${post.category}</span>` : ''}
+                    <h1>${post.title}</h1>
+                    <p style="color:var(--muted);">${post.author ? 'Yazar: ' + post.author + ' | ' : ''}${new Date(post.published_at).toLocaleDateString('tr-TR')}</p>
+                    <div style="margin-top:30px;">${post.content || ''}</div>
+                `;
+            } catch (e) {
+                container.innerHTML = '<p>Blog yazısı bulunamadı.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
