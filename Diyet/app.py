@@ -25,14 +25,14 @@ PHOTO_ROOT = BASE_DIR / 'Fotoraflar'
 DATABASE_PATH = BASE_DIR / 'app.db'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'cok-gizli-anahtar-degistir')
-ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin123!')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@sena.fit')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'SenaFit123!')
 
-# E-posta ayarları (Gmail SMTP)
+# E-posta (Gmail SMTP) - .env dosyasına SMTP_PASS ekleyin veya aşağıya yazın
 SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 SMTP_USER = os.environ.get('SMTP_USER', 'diyetmaili01@gmail.com')
-SMTP_PASS = os.environ.get('SMTP_PASS', '')
+SMTP_PASS = os.environ.get('SMTP_PASS', '')  # ← Gmail Uygulama Şifrenizi buraya yazın veya .env'e ekleyin
 NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'diyetmaili01@gmail.com')
 
 app = Flask(__name__)
@@ -364,11 +364,11 @@ def init_db():
         print(f"Admin oluşturuldu: {ADMIN_EMAIL} / {ADMIN_PASSWORD}")
 
     socials = [
-        ('instagram', 'https://www.instagram.com/senaform'),
-        ('tiktok', 'https://www.tiktok.com/@senaform'),
-        ('youtube', 'https://www.youtube.com/@senaform'),
+        ('instagram', 'https://www.instagram.com/senafit'),
+        ('tiktok', 'https://www.tiktok.com/@senafit'),
+        ('youtube', 'https://www.youtube.com/@senafit'),
         ('whatsapp', 'https://wa.me/905555555555'),
-        ('email', 'mailto:info@senaform.com')
+        ('email', 'mailto:info@senafit.com')
     ]
     for platform, url in socials:
         if not SocialLink.query.filter_by(platform=platform).first():
@@ -376,12 +376,12 @@ def init_db():
     db.session.commit()
 
     settings = {
-        'site_name': 'SENA FORM',
+        'site_name': 'SenaFit Nutrition',
         'hero_title': 'Beslenmeni Planla. Hareketini Güçlendir.',
         'hero_description': 'Kişisel hedeflerine uygun beslenme ve egzersiz programlarıyla daha sürdürülebilir bir yaşam oluştur.',
-        'footer_text': '© 2026 SENA FORM. Tüm hakları saklıdır.',
+        'footer_text': '© 2026 SenaFit Nutrition. Tüm hakları saklıdır.',
         'phone': '+90 555 555 55 55',
-        'email': 'info@senaform.com',
+        'email': 'info@senafit.com',
         'about_text': 'Beslenme ve Diyetetik ile Egzersiz ve Spor Bilimleri alanlarındaki eğitimlerimle, bilimi günlük hayata uygulanabilir, sürdürülebilir ve kişiye özel programlara dönüştürüyorum.'
     }
     for key, value in settings.items():
@@ -429,15 +429,15 @@ def init_db():
         b1 = BlogPost(title='Protein Kaynakları Hakkında 5 Pratik Öneri', slug='5-pratik-protein-kaynagi',
                       summary='Günlük protein ihtiyacınızı karşılamak için pratik öneriler.',
                       content='<p>Protein, kas gelişimi ve tokluk için önemlidir...</p>',
-                      category='Beslenme', author='Sena Form', published_at=datetime.utcnow(), is_active=True)
+                      category='Beslenme', author='SenaFit Nutrition', published_at=datetime.utcnow(), is_active=True)
         b2 = BlogPost(title='Evde Antrenman Yapmanın Püf Noktaları', slug='evde-antrenman-puf-noktalari',
                       summary='Ekipmansız etkili antrenman yöntemleri.',
                       content='<p>Evde antrenman yaparken dikkat edilmesi gerekenler...</p>',
-                      category='Egzersiz', author='Sena Form', published_at=datetime.utcnow(), is_active=True)
+                      category='Egzersiz', author='SenaFit Nutrition', published_at=datetime.utcnow(), is_active=True)
         b3 = BlogPost(title='Sürdürülebilir Beslenme Nasıl Olur?', slug='surdurulebilir-beslenme',
                       summary='Kısa vadeli diyetler yerine kalıcı alışkanlıklar.',
                       content='<p>Sürdürülebilir beslenme, yaşam tarzıdır...</p>',
-                      category='Yaşam', author='Sena Form', published_at=datetime.utcnow(), is_active=True)
+                      category='Yaşam', author='SenaFit Nutrition', published_at=datetime.utcnow(), is_active=True)
         db.session.add(b1)
         db.session.add(b2)
         db.session.add(b3)
@@ -449,7 +449,6 @@ def login():
     ip = get_client_ip()
     if is_ip_banned(ip):
         return json_response(False, message='IP adresiniz geçici olarak banlandı. Lütfen 1 saat sonra tekrar deneyin.', status=403)
-
     data = request.get_json() or {}
     email = data.get('email', '').strip()
     password = data.get('password', '')
@@ -503,15 +502,9 @@ def get_package(package_id):
     if not p.is_active:
         return json_response(False, message='Paket aktif değil.', status=404)
     return json_response(True, data={
-        'id': p.id,
-        'name': p.name,
-        'slug': p.slug,
-        'category': p.category,
-        'description': p.description,
-        'price': p.price,
-        'duration': p.duration,
-        'cover_image': p.cover_image,
-        'features': [f.text for f in p.features]
+        'id': p.id, 'name': p.name, 'slug': p.slug, 'category': p.category,
+        'description': p.description, 'price': p.price, 'duration': p.duration,
+        'cover_image': p.cover_image, 'features': [f.text for f in p.features]
     })
 
 @app.route('/api/packages', methods=['POST'])
@@ -520,9 +513,21 @@ def create_package():
     data = request.get_json() or {}
     if not data.get('name') or not data.get('category') or data.get('price') is None:
         return json_response(False, message='Paket adı, kategori ve fiyat zorunludur.', status=400)
+
+    cover_image = data.get('cover_image')
+    if cover_image and isinstance(cover_image, str) and cover_image.startswith('data:'):
+        data_bytes, ext = validate_image(cover_image)
+        if data_bytes:
+            cover_image = save_image(data_bytes, folder='packages', extension=ext)
+        else:
+            return json_response(False, message='Geçersiz görsel verisi.', status=400)
+    else:
+        cover_image = cover_image if cover_image else None
+
     slug = data.get('slug') or slugify(data['name'])
     if Package.query.filter_by(slug=slug).first():
         return json_response(False, message='Bu slug zaten mevcut.', status=400)
+
     p = Package(
         name=data['name'],
         slug=slug,
@@ -530,7 +535,7 @@ def create_package():
         description=data.get('description', ''),
         price=float(data.get('price', 0)),
         duration=data.get('duration'),
-        cover_image=data.get('cover_image'),
+        cover_image=cover_image,
         is_active=data.get('is_active', True),
         is_featured=data.get('is_featured', False),
         sort_order=int(data.get('sort_order', 0))
@@ -551,27 +556,26 @@ def update_package(package_id):
         p.name = data['name']
         if 'slug' not in data:
             p.slug = slugify(data['name'])
-    if 'slug' in data:
-        p.slug = data['slug']
-    if 'category' in data:
-        p.category = data['category']
-    if 'description' in data:
-        p.description = data['description']
-    if 'price' in data:
-        p.price = float(data['price'])
-    if 'duration' in data:
-        p.duration = data['duration']
+    if 'slug' in data: p.slug = data['slug']
+    if 'category' in data: p.category = data['category']
+    if 'description' in data: p.description = data['description']
+    if 'price' in data: p.price = float(data['price'])
+    if 'duration' in data: p.duration = data['duration']
     if 'cover_image' in data:
-        p.cover_image = data['cover_image']
-    if 'is_active' in data:
-        p.is_active = data['is_active']
-    if 'is_featured' in data:
-        p.is_featured = data['is_featured']
-    if 'sort_order' in data:
-        p.sort_order = int(data['sort_order'])
+        cover_image = data['cover_image']
+        if isinstance(cover_image, str) and cover_image.startswith('data:'):
+            data_bytes, ext = validate_image(cover_image)
+            if data_bytes:
+                p.cover_image = save_image(data_bytes, folder='packages', extension=ext)
+            else:
+                return json_response(False, message='Geçersiz görsel.', status=400)
+        else:
+            p.cover_image = cover_image if cover_image else None
+    if 'is_active' in data: p.is_active = data['is_active']
+    if 'is_featured' in data: p.is_featured = data['is_featured']
+    if 'sort_order' in data: p.sort_order = int(data['sort_order'])
     if 'features' in data:
-        for f in p.features:
-            db.session.delete(f)
+        for f in p.features: db.session.delete(f)
         for idx, text in enumerate(data['features']):
             p.features.append(PackageFeature(text=text, sort_order=idx))
     db.session.commit()
@@ -591,18 +595,21 @@ def delete_package(package_id):
 @app.route('/api/events', methods=['GET'])
 def get_events():
     events = Event.query.filter_by(is_active=True).order_by(Event.event_date.asc()).all()
-    data = [{
-        'id': e.id,
-        'title': e.title,
-        'description': e.description,
-        'event_date': e.event_date.isoformat() if e.event_date else None,
-        'event_time': e.event_time.strftime('%H:%M') if e.event_time else None,
-        'location': e.location,
-        'is_online': e.is_online,
-        'cover_image': e.cover_image,
-        'capacity': e.capacity,
-        'registration_link': e.registration_link
-    } for e in events]
+    data = []
+    for e in events:
+        data.append({
+            'id': e.id,
+            'title': e.title,
+            'description': e.description,
+            'event_date': e.event_date.isoformat() if e.event_date else None,
+            'event_time': e.event_time.strftime('%H:%M') if e.event_time else None,
+            'location': e.location,
+            'is_online': e.is_online,
+            'cover_image': e.cover_image,
+            'capacity': e.capacity,
+            'registration_link': e.registration_link,
+            'is_active': e.is_active
+        })
     return json_response(True, data=data)
 
 @app.route('/api/events', methods=['POST'])
@@ -611,6 +618,17 @@ def create_event():
     data = request.get_json() or {}
     if not data.get('title') or not data.get('event_date'):
         return json_response(False, message='Başlık ve tarih zorunludur.', status=400)
+
+    cover_image = data.get('cover_image')
+    if cover_image and isinstance(cover_image, str) and cover_image.startswith('data:'):
+        data_bytes, ext = validate_image(cover_image)
+        if data_bytes:
+            cover_image = save_image(data_bytes, folder='events', extension=ext)
+        else:
+            return json_response(False, message='Geçersiz görsel verisi.', status=400)
+    else:
+        cover_image = cover_image if cover_image else None
+
     e = Event(
         title=data['title'],
         description=data.get('description', ''),
@@ -618,7 +636,7 @@ def create_event():
         event_time=parse_time(data['event_time']) if data.get('event_time') else None,
         location=data.get('location'),
         is_online=data.get('is_online', False),
-        cover_image=data.get('cover_image'),
+        cover_image=cover_image,
         capacity=int(data['capacity']) if data.get('capacity') else None,
         registration_link=data.get('registration_link'),
         is_active=data.get('is_active', True)
@@ -632,26 +650,25 @@ def create_event():
 def update_event(event_id):
     e = Event.query.get_or_404(event_id)
     data = request.get_json() or {}
-    if 'title' in data:
-        e.title = data['title']
-    if 'description' in data:
-        e.description = data['description']
-    if 'event_date' in data:
-        e.event_date = parse_date(data['event_date'])
-    if 'event_time' in data:
-        e.event_time = parse_time(data['event_time']) if data['event_time'] else None
-    if 'location' in data:
-        e.location = data['location']
-    if 'is_online' in data:
-        e.is_online = data['is_online']
+    if 'title' in data: e.title = data['title']
+    if 'description' in data: e.description = data['description']
+    if 'event_date' in data: e.event_date = parse_date(data['event_date'])
+    if 'event_time' in data: e.event_time = parse_time(data['event_time']) if data['event_time'] else None
+    if 'location' in data: e.location = data['location']
+    if 'is_online' in data: e.is_online = data['is_online']
     if 'cover_image' in data:
-        e.cover_image = data['cover_image']
-    if 'capacity' in data:
-        e.capacity = int(data['capacity']) if data['capacity'] else None
-    if 'registration_link' in data:
-        e.registration_link = data['registration_link']
-    if 'is_active' in data:
-        e.is_active = data['is_active']
+        cover_image = data['cover_image']
+        if isinstance(cover_image, str) and cover_image.startswith('data:'):
+            data_bytes, ext = validate_image(cover_image)
+            if data_bytes:
+                e.cover_image = save_image(data_bytes, folder='events', extension=ext)
+            else:
+                return json_response(False, message='Geçersiz görsel.', status=400)
+        else:
+            e.cover_image = cover_image if cover_image else None
+    if 'capacity' in data: e.capacity = int(data['capacity']) if data['capacity'] else None
+    if 'registration_link' in data: e.registration_link = data['registration_link']
+    if 'is_active' in data: e.is_active = data['is_active']
     db.session.commit()
     return json_response(True, message='Etkinlik güncellendi.')
 
@@ -669,29 +686,28 @@ def delete_event(event_id):
 @app.route('/api/blog', methods=['GET'])
 def get_blog_posts():
     posts = BlogPost.query.filter_by(is_active=True).order_by(BlogPost.published_at.desc()).all()
-    data = [{
-        'id': p.id,
-        'title': p.title,
-        'slug': p.slug,
-        'summary': p.summary,
-        'cover_image': p.cover_image,
-        'category': p.category,
-        'author': p.author,
-        'published_at': p.published_at.isoformat() if p.published_at else None
-    } for p in posts]
+    data = []
+    for post in posts:
+        data.append({
+            'id': post.id,
+            'title': post.title,
+            'slug': post.slug,
+            'summary': post.summary,
+            'cover_image': post.cover_image,
+            'category': post.category,
+            'author': post.author,
+            'published_at': post.published_at.isoformat() if post.published_at else None,
+            'is_active': post.is_active
+        })
     return json_response(True, data=data)
 
 @app.route('/api/blog/<slug>', methods=['GET'])
 def get_blog_post(slug):
     post = BlogPost.query.filter_by(slug=slug, is_active=True).first_or_404()
     return json_response(True, data={
-        'id': post.id,
-        'title': post.title,
-        'slug': post.slug,
-        'summary': post.summary,
-        'content': post.content,
-        'cover_image': post.cover_image,
-        'category': post.category,
+        'id': post.id, 'title': post.title, 'slug': post.slug,
+        'summary': post.summary, 'content': post.content,
+        'cover_image': post.cover_image, 'category': post.category,
         'author': post.author,
         'published_at': post.published_at.isoformat() if post.published_at else None
     })
@@ -702,15 +718,27 @@ def create_blog_post():
     data = request.get_json() or {}
     if not data.get('title'):
         return json_response(False, message='Başlık zorunludur.', status=400)
+
+    cover_image = data.get('cover_image')
+    if cover_image and isinstance(cover_image, str) and cover_image.startswith('data:'):
+        data_bytes, ext = validate_image(cover_image)
+        if data_bytes:
+            cover_image = save_image(data_bytes, folder='blog', extension=ext)
+        else:
+            return json_response(False, message='Geçersiz görsel verisi.', status=400)
+    else:
+        cover_image = cover_image if cover_image else None
+
     slug = data.get('slug') or slugify(data['title'])
     if BlogPost.query.filter_by(slug=slug).first():
         return json_response(False, message='Bu slug zaten mevcut.', status=400)
+
     post = BlogPost(
         title=data['title'],
         slug=slug,
         summary=data.get('summary', ''),
         content=data.get('content', ''),
-        cover_image=data.get('cover_image'),
+        cover_image=cover_image,
         category=data.get('category', ''),
         author=data.get('author', ''),
         published_at=data.get('published_at') or None,
@@ -727,24 +755,24 @@ def update_blog_post(post_id):
     data = request.get_json() or {}
     if 'title' in data and data['title']:
         post.title = data['title']
-        if 'slug' not in data:
-            post.slug = slugify(data['title'])
-    if 'slug' in data:
-        post.slug = data['slug']
-    if 'summary' in data:
-        post.summary = data['summary']
-    if 'content' in data:
-        post.content = data['content']
+        if 'slug' not in data: post.slug = slugify(data['title'])
+    if 'slug' in data: post.slug = data['slug']
+    if 'summary' in data: post.summary = data['summary']
+    if 'content' in data: post.content = data['content']
     if 'cover_image' in data:
-        post.cover_image = data['cover_image']
-    if 'category' in data:
-        post.category = data['category']
-    if 'author' in data:
-        post.author = data['author']
-    if 'published_at' in data:
-        post.published_at = data['published_at']
-    if 'is_active' in data:
-        post.is_active = data['is_active']
+        cover_image = data['cover_image']
+        if isinstance(cover_image, str) and cover_image.startswith('data:'):
+            data_bytes, ext = validate_image(cover_image)
+            if data_bytes:
+                post.cover_image = save_image(data_bytes, folder='blog', extension=ext)
+            else:
+                return json_response(False, message='Geçersiz görsel.', status=400)
+        else:
+            post.cover_image = cover_image if cover_image else None
+    if 'category' in data: post.category = data['category']
+    if 'author' in data: post.author = data['author']
+    if 'published_at' in data: post.published_at = data['published_at']
+    if 'is_active' in data: post.is_active = data['is_active']
     db.session.commit()
     return json_response(True, message='Blog yazısı güncellendi.')
 
@@ -765,23 +793,15 @@ def create_application():
     if not data.get('name') or not data.get('surname'):
         return json_response(False, message='Ad ve soyad zorunludur.', status=400)
     app = Application(
-        name=data['name'],
-        surname=data['surname'],
-        phone=data.get('phone'),
-        email=data.get('email'),
-        age=int(data['age']) if data.get('age') else None,
-        gender=data.get('gender'),
-        height=float(data['height']) if data.get('height') else None,
+        name=data['name'], surname=data['surname'], phone=data.get('phone'),
+        email=data.get('email'), age=int(data['age']) if data.get('age') else None,
+        gender=data.get('gender'), height=float(data['height']) if data.get('height') else None,
         weight=float(data['weight']) if data.get('weight') else None,
-        goal=data.get('goal'),
-        activity_level=data.get('activity_level'),
-        nutrition_preference=data.get('nutrition_preference'),
-        allergies=data.get('allergies'),
-        training_experience=data.get('training_experience'),
-        environment=data.get('environment'),
+        goal=data.get('goal'), activity_level=data.get('activity_level'),
+        nutrition_preference=data.get('nutrition_preference'), allergies=data.get('allergies'),
+        training_experience=data.get('training_experience'), environment=data.get('environment'),
         days_per_week=int(data['days_per_week']) if data.get('days_per_week') else None,
-        note=data.get('note'),
-        package_id=int(data['package_id']) if data.get('package_id') else None,
+        note=data.get('note'), package_id=int(data['package_id']) if data.get('package_id') else None,
         status=data.get('status', 'Bekliyor')
     )
     db.session.add(app)
@@ -793,15 +813,9 @@ def create_application():
 def get_applications():
     apps = Application.query.order_by(Application.created_at.desc()).all()
     data = [{
-        'id': a.id,
-        'name': a.name,
-        'surname': a.surname,
-        'phone': a.phone,
-        'email': a.email,
-        'age': a.age,
-        'goal': a.goal,
-        'status': a.status,
-        'note': a.note,
+        'id': a.id, 'name': a.name, 'surname': a.surname,
+        'phone': a.phone, 'email': a.email, 'age': a.age,
+        'goal': a.goal, 'status': a.status, 'note': a.note,
         'created_at': a.created_at.isoformat() if a.created_at else None
     } for a in apps]
     return json_response(True, data=data)
@@ -811,10 +825,8 @@ def get_applications():
 def update_application(app_id):
     app = Application.query.get_or_404(app_id)
     data = request.get_json() or {}
-    if 'status' in data:
-        app.status = data['status']
-    if 'note' in data:
-        app.note = data['note']
+    if 'status' in data: app.status = data['status']
+    if 'note' in data: app.note = data['note']
     db.session.commit()
     return json_response(True, message='Başvuru güncellendi.')
 
@@ -833,14 +845,9 @@ def create_appointment():
     if not data.get('date') or not data.get('time') or not data.get('name'):
         return json_response(False, message='Tarih, saat ve isim zorunludur.', status=400)
     apt = Appointment(
-        date=parse_date(data['date']),
-        time=parse_time(data['time']),
-        name=data['name'],
-        phone=data.get('phone'),
-        email=data.get('email'),
-        service=data.get('service'),
-        note=data.get('note'),
-        status=data.get('status', 'Bekliyor')
+        date=parse_date(data['date']), time=parse_time(data['time']),
+        name=data['name'], phone=data.get('phone'), email=data.get('email'),
+        service=data.get('service'), note=data.get('note'), status=data.get('status', 'Bekliyor')
     )
     db.session.add(apt)
     db.session.commit()
@@ -851,15 +858,10 @@ def create_appointment():
 def get_appointments():
     apts = Appointment.query.order_by(Appointment.date.desc(), Appointment.time.desc()).all()
     data = [{
-        'id': a.id,
-        'date': a.date.isoformat() if a.date else None,
+        'id': a.id, 'date': a.date.isoformat() if a.date else None,
         'time': a.time.strftime('%H:%M') if a.time else None,
-        'name': a.name,
-        'phone': a.phone,
-        'email': a.email,
-        'service': a.service,
-        'note': a.note,
-        'status': a.status,
+        'name': a.name, 'phone': a.phone, 'email': a.email,
+        'service': a.service, 'note': a.note, 'status': a.status,
         'created_at': a.created_at.isoformat() if a.created_at else None
     } for a in apts]
     return json_response(True, data=data)
@@ -869,22 +871,14 @@ def get_appointments():
 def update_appointment(apt_id):
     apt = Appointment.query.get_or_404(apt_id)
     data = request.get_json() or {}
-    if 'date' in data:
-        apt.date = parse_date(data['date'])
-    if 'time' in data:
-        apt.time = parse_time(data['time'])
-    if 'name' in data:
-        apt.name = data['name']
-    if 'phone' in data:
-        apt.phone = data['phone']
-    if 'email' in data:
-        apt.email = data['email']
-    if 'service' in data:
-        apt.service = data['service']
-    if 'note' in data:
-        apt.note = data['note']
-    if 'status' in data:
-        apt.status = data['status']
+    if 'date' in data: apt.date = parse_date(data['date'])
+    if 'time' in data: apt.time = parse_time(data['time'])
+    if 'name' in data: apt.name = data['name']
+    if 'phone' in data: apt.phone = data['phone']
+    if 'email' in data: apt.email = data['email']
+    if 'service' in data: apt.service = data['service']
+    if 'note' in data: apt.note = data['note']
+    if 'status' in data: apt.status = data['status']
     db.session.commit()
     return json_response(True, message='Randevu güncellendi.')
 
@@ -915,11 +909,8 @@ def update_site_settings():
     for key, value in data.items():
         if key in allowed_keys:
             setting = SiteSetting.query.filter_by(key=key).first()
-            if setting:
-                setting.value = str(value)
-            else:
-                setting = SiteSetting(key=key, value=str(value))
-                db.session.add(setting)
+            if setting: setting.value = str(value)
+            else: db.session.add(SiteSetting(key=key, value=str(value)))
     db.session.commit()
     return json_response(True, message='Site ayarları güncellendi.')
 
@@ -936,11 +927,8 @@ def update_social_links():
     for platform, url in data.items():
         if platform in allowed_platforms:
             link = SocialLink.query.filter_by(platform=platform).first()
-            if link:
-                link.url = str(url)
-            else:
-                link = SocialLink(platform=platform, url=str(url))
-                db.session.add(link)
+            if link: link.url = str(url)
+            else: db.session.add(SocialLink(platform=platform, url=str(url)))
     db.session.commit()
     return json_response(True, message='Sosyal medya linkleri güncellendi.')
 
@@ -950,11 +938,8 @@ def update_social_links():
 def get_media():
     media = Media.query.order_by(Media.uploaded_at.desc()).all()
     data = [{
-        'id': m.id,
-        'filename': m.filename,
-        'filepath': m.filepath,
-        'filetype': m.filetype,
-        'url': f"/media/{m.filepath.lstrip('/')}",
+        'id': m.id, 'filename': m.filename, 'filepath': m.filepath,
+        'filetype': m.filetype, 'url': f"/media/{m.filepath.lstrip('/')}",
         'uploaded_at': m.uploaded_at.isoformat() if m.uploaded_at else None
     } for m in media]
     return json_response(True, data=data)
@@ -1006,19 +991,16 @@ def create_purchase():
     package = Package.query.get(data['package_id'])
     if not package:
         return json_response(False, message='Paket bulunamadı.', status=404)
+
     purchase = Purchase(
-        name=data['name'],
-        surname=data['surname'],
-        email=data['email'],
-        package_id=package.id,
-        package_name=package.name,
-        price=package.price,
-        note=data.get('note', ''),
-        status='Bekliyor'
+        name=data['name'], surname=data['surname'], email=data['email'],
+        package_id=package.id, package_name=package.name, price=package.price,
+        note=data.get('note', ''), status='Bekliyor'
     )
     db.session.add(purchase)
     db.session.commit()
 
+    # E-posta gönderimi
     subject = f"Yeni Satın Alma Talebi: {package.name}"
     body = f"""Yeni satın alma talebi alındı.
 
@@ -1044,14 +1026,9 @@ Tarih: {datetime.utcnow().strftime('%d.%m.%Y %H:%M')}
 def get_purchases():
     purchases = Purchase.query.order_by(Purchase.created_at.desc()).all()
     data = [{
-        'id': p.id,
-        'name': p.name,
-        'surname': p.surname,
-        'email': p.email,
-        'package_name': p.package_name,
-        'price': p.price,
-        'note': p.note,
-        'status': p.status,
+        'id': p.id, 'name': p.name, 'surname': p.surname,
+        'email': p.email, 'package_name': p.package_name,
+        'price': p.price, 'note': p.note, 'status': p.status,
         'created_at': p.created_at.isoformat() if p.created_at else None
     } for p in purchases]
     return json_response(True, data=data)

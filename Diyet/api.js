@@ -30,13 +30,16 @@ const api = {
     getSiteSettings: () => fetchAPI(`${API_BASE}/site-settings`),
     getSocialLinks: () => fetchAPI(`${API_BASE}/social-links`),
     createApplication: (data) => fetchAPI(`${API_BASE}/applications`, {
-        method: 'POST', body: JSON.stringify(data)
+        method: 'POST',
+        body: JSON.stringify(data)
     }),
     createAppointment: (data) => fetchAPI(`${API_BASE}/appointments`, {
-        method: 'POST', body: JSON.stringify(data)
+        method: 'POST',
+        body: JSON.stringify(data)
     }),
     createPurchase: (data) => fetchAPI(`${API_BASE}/purchase`, {
-        method: 'POST', body: JSON.stringify(data)
+        method: 'POST',
+        body: JSON.stringify(data)
     })
 };
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - SENA FORM</title>
+    <title>Blog - SenaFit Nutrition</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body data-page="blog">
@@ -32,7 +32,7 @@
                 container.innerHTML = posts.map(post => `
                     <div class="blog-card">
                         <div class="blog-image">
-                            <img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${post.title}" onerror="this.src='/placeholder.jpg'">
+                            <img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${post.title}" onerror="this.style.display='none'">
                         </div>
                         <div class="blog-body">
                             ${post.category ? `<span class="blog-category">${post.category}</span>` : ''}

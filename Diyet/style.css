@@ -32,7 +32,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-body { font-family: var(--font-sans); background-color: var(--background); color: var(--text); line-height: 1.6; transition: background-color 0.3s, color 0.3s; overflow-x: hidden; }
+body { font-family: var(--font-sans); background-color: var(--background); color: var(--text); line-height: 1.6; transition: background-color 0.3s, color 0.3s; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
@@ -49,13 +49,6 @@ h4 { font-size: 1.2rem; }
 .btn-outline:hover { background: var(--primary); color: #fff; }
 .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { background: var(--surface-alt); border-color: var(--primary); color: var(--primary); }
-
-.bg-effects { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
-.bg-shape { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; transition: opacity 0.3s; }
-.bg-shape.shape1 { width: 500px; height: 500px; background: var(--primary); top: -100px; right: -100px; }
-.bg-shape.shape2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -100px; }
-.bg-shape.shape3 { width: 300px; height: 300px; background: var(--secondary); top: 50%; left: 50%; transform: translate(-50%, -50%); }
-[data-theme="dark"] .bg-shape { opacity: 0.15; }
 
 .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 0; transition: all 0.4s; background: transparent; }
 .navbar.scrolled { background: var(--surface); padding: 12px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.08); backdrop-filter: blur(10px); }

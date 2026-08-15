@@ -45,37 +45,101 @@ const adminApi = {
             body: JSON.stringify({ email, password })
         });
         const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.message || 'Giriş başarısız.');
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Giriş başarısız.');
+        }
         return data.data;
     },
     logout: () => setAuthToken(null),
     getDashboard: () => adminFetch(`${ADMIN_API_BASE}/dashboard`),
+
+    // Paketler
     getPackages: () => adminFetch(`${ADMIN_API_BASE}/packages`),
     getPackage: (id) => adminFetch(`${ADMIN_API_BASE}/packages/${id}`),
-    createPackage: (data) => adminFetch(`${ADMIN_API_BASE}/packages`, { method: 'POST', body: JSON.stringify(data) }),
-    updatePackage: (id, data) => adminFetch(`${ADMIN_API_BASE}/packages/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deletePackage: (id) => adminFetch(`${ADMIN_API_BASE}/packages/${id}`, { method: 'DELETE' }),
+    createPackage: (data) => adminFetch(`${ADMIN_API_BASE}/packages`, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    }),
+    updatePackage: (id, data) => adminFetch(`${ADMIN_API_BASE}/packages/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deletePackage: (id) => adminFetch(`${ADMIN_API_BASE}/packages/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Etkinlikler
     getEvents: () => adminFetch(`${ADMIN_API_BASE}/events`),
     getEvent: (id) => adminFetch(`${ADMIN_API_BASE}/events/${id}`),
-    createEvent: (data) => adminFetch(`${ADMIN_API_BASE}/events`, { method: 'POST', body: JSON.stringify(data) }),
-    updateEvent: (id, data) => adminFetch(`${ADMIN_API_BASE}/events/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deleteEvent: (id) => adminFetch(`${ADMIN_API_BASE}/events/${id}`, { method: 'DELETE' }),
+    createEvent: (data) => adminFetch(`${ADMIN_API_BASE}/events`, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    }),
+    updateEvent: (id, data) => adminFetch(`${ADMIN_API_BASE}/events/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deleteEvent: (id) => adminFetch(`${ADMIN_API_BASE}/events/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Blog
     getBlogPosts: () => adminFetch(`${ADMIN_API_BASE}/blog`),
     getBlogPost: (id) => adminFetch(`${ADMIN_API_BASE}/blog/${id}`),
-    createBlogPost: (data) => adminFetch(`${ADMIN_API_BASE}/blog`, { method: 'POST', body: JSON.stringify(data) }),
-    updateBlogPost: (id, data) => adminFetch(`${ADMIN_API_BASE}/blog/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deleteBlogPost: (id) => adminFetch(`${ADMIN_API_BASE}/blog/${id}`, { method: 'DELETE' }),
+    createBlogPost: (data) => adminFetch(`${ADMIN_API_BASE}/blog`, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    }),
+    updateBlogPost: (id, data) => adminFetch(`${ADMIN_API_BASE}/blog/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deleteBlogPost: (id) => adminFetch(`${ADMIN_API_BASE}/blog/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Başvurular
     getApplications: () => adminFetch(`${ADMIN_API_BASE}/applications`),
-    updateApplication: (id, data) => adminFetch(`${ADMIN_API_BASE}/applications/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deleteApplication: (id) => adminFetch(`${ADMIN_API_BASE}/applications/${id}`, { method: 'DELETE' }),
+    updateApplication: (id, data) => adminFetch(`${ADMIN_API_BASE}/applications/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deleteApplication: (id) => adminFetch(`${ADMIN_API_BASE}/applications/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Randevular
     getAppointments: () => adminFetch(`${ADMIN_API_BASE}/appointments`),
-    updateAppointment: (id, data) => adminFetch(`${ADMIN_API_BASE}/appointments/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    deleteAppointment: (id) => adminFetch(`${ADMIN_API_BASE}/appointments/${id}`, { method: 'DELETE' }),
+    updateAppointment: (id, data) => adminFetch(`${ADMIN_API_BASE}/appointments/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deleteAppointment: (id) => adminFetch(`${ADMIN_API_BASE}/appointments/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Medya
     getMedia: () => adminFetch(`${ADMIN_API_BASE}/media`),
-    uploadMedia: (formData) => adminFetch(`${ADMIN_API_BASE}/media/upload`, { method: 'POST', headers: {}, body: formData }),
-    deleteMedia: (id) => adminFetch(`${ADMIN_API_BASE}/media/${id}`, { method: 'DELETE' }),
+    uploadMedia: (formData) => adminFetch(`${ADMIN_API_BASE}/media/upload`, {
+        method: 'POST',
+        headers: {},
+        body: formData
+    }),
+    deleteMedia: (id) => adminFetch(`${ADMIN_API_BASE}/media/${id}`, {
+        method: 'DELETE'
+    }),
+
+    // Satın Almalar
     getPurchases: () => adminFetch(`${ADMIN_API_BASE}/purchases`),
+
+    // Site Ayarları & Sosyal
     getSiteSettings: () => adminFetch(`${ADMIN_API_BASE}/site-settings`),
-    updateSiteSettings: (data) => adminFetch(`${ADMIN_API_BASE}/site-settings`, { method: 'PUT', body: JSON.stringify(data) }),
-    updateSocialLinks: (data) => adminFetch(`${ADMIN_API_BASE}/social-links`, { method: 'PUT', body: JSON.stringify(data) })
+    updateSiteSettings: (data) => adminFetch(`${ADMIN_API_BASE}/site-settings`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    updateSocialLinks: (data) => adminFetch(`${ADMIN_API_BASE}/social-links`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    })
 };

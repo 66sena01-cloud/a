@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     createFooter();
     initScrollReveal();
     initThemeToggle();
-    initBackgroundEffects();
 
     const hamburger = document.getElementById('hamburger');
     if (hamburger) hamburger.addEventListener('click', () => document.getElementById('navLinks').classList.toggle('active'));
@@ -22,7 +21,7 @@ function createNavbar() {
     navbar.className = 'navbar';
     navbar.innerHTML = `
         <div class="container">
-            <a href="/" class="logo">SENA <span>FORM</span></a>
+            <a href="/" class="logo">SenaFit <span>Nutrition</span></a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="/">Ana Sayfa</a></li>
                 <li><a href="/packages.html">Programlar</a></li>
@@ -57,29 +56,18 @@ function initThemeToggle() {
     }
 }
 
-function initBackgroundEffects() {
-    const bg = document.createElement('div');
-    bg.className = 'bg-effects';
-    bg.innerHTML = `
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-    `;
-    document.body.appendChild(bg);
-}
-
 function createFooter() {
     const footer = document.createElement('footer');
     footer.className = 'footer';
     footer.innerHTML = `
         <div class="container">
             <div class="footer-grid">
-                <div><h4>SENA FORM</h4><p>Beslenme ve egzersizde bilimsel, sürdürülebilir ve kişiye özel yaklaşım.</p></div>
+                <div><h4>SenaFit Nutrition</h4><p>Beslenme ve egzersizde bilimsel, sürdürülebilir ve kişiye özel yaklaşım.</p></div>
                 <div><h4>Menü</h4><ul><li><a href="/">Ana Sayfa</a></li><li><a href="/packages.html">Programlar</a></li><li><a href="/events.html">Etkinlikler</a></li><li><a href="/blog.html">Blog</a></li><li><a href="/about.html">Hakkımda</a></li><li><a href="/contact.html">İletişim</a></li></ul></div>
                 <div><h4>Hizmetler</h4><ul><li><a href="/packages.html?category=beslenme">Beslenme Programları</a></li><li><a href="/packages.html?category=egzersiz">Egzersiz Programları</a></li><li><a href="/packages.html?category=kombine">Kombine Programlar</a></li></ul></div>
                 <div><h4>Sosyal Medya</h4><ul id="footerSocialLinks"></ul></div>
             </div>
-            <div class="footer-bottom" id="footerText">© 2026 SENA FORM. Tüm hakları saklıdır.</div>
+            <div class="footer-bottom" id="footerText">© 2026 SenaFit Nutrition. Tüm hakları saklıdır.</div>
         </div>
     `;
     document.body.appendChild(footer);
@@ -123,7 +111,7 @@ async function initIndex() {
             featuredContainer.innerHTML = featured.length ? featured.map(pkg => `
                 <div class="package-card ${pkg.is_featured ? 'featured' : ''}">
                     ${pkg.is_featured ? '<div class="badge">EN POPÜLER</div>' : ''}
-                    <div class="package-image"><img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" onerror="this.src='/placeholder.jpg'"></div>
+                    <div class="package-image"><img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" onerror="this.style.display='none'"></div>
                     <div class="package-body">
                         <span class="package-category">${pkg.category}</span>
                         <h3>${pkg.name}</h3>
@@ -136,6 +124,7 @@ async function initIndex() {
             featuredContainer.innerHTML = '<p>Paketler yüklenemedi.</p>';
         }
     }
+
     const eventsContainer = document.getElementById('upcomingEvents');
     if (eventsContainer) {
         try {
@@ -153,13 +142,14 @@ async function initIndex() {
             eventsContainer.innerHTML = '<p>Etkinlikler yüklenemedi.</p>';
         }
     }
+
     const blogContainer = document.getElementById('recentBlog');
     if (blogContainer) {
         try {
             const posts = await api.getBlogPosts();
             blogContainer.innerHTML = posts.length ? posts.slice(0,3).map(post => `
                 <div class="blog-card">
-                    <div class="blog-image"><img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${post.title}" onerror="this.src='/placeholder.jpg'"></div>
+                    <div class="blog-image"><img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${post.title}" onerror="this.style.display='none'"></div>
                     <div class="blog-body"><span class="blog-category">${post.category || ''}</span><h3>${post.title}</h3><p>${post.summary || ''}</p><a href="/blog-detail.html?slug=${post.slug}" class="btn btn-secondary">Devamını Oku</a></div>
                 </div>
             `).join('') : '<p>Henüz blog yazısı yok.</p>';
@@ -167,6 +157,7 @@ async function initIndex() {
             blogContainer.innerHTML = '<p>Blog yazıları yüklenemedi.</p>';
         }
     }
+
     try {
         const settings = await api.getSiteSettings();
         const heroTitle = document.getElementById('heroTitle');

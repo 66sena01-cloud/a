@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paket Detayı - SENA FORM</title>
+    <title>Paket Detayı - SenaFit Nutrition</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body data-page="package-detail">
@@ -32,7 +32,7 @@
                 container.innerHTML = `
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;" class="detail-grid">
                         <div>
-                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" style="border-radius:30px;box-shadow:var(--shadow-hover);" onerror="this.src='/placeholder.jpg'">
+                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" style="border-radius:30px;box-shadow:var(--shadow-hover);" onerror="this.style.display='none'">
                         </div>
                         <div>
                             <span class="package-category">${pkg.category}</span>

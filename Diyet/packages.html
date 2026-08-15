@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programlar - SENA FORM</title>
+    <title>Programlar - SenaFit Nutrition</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body data-page="packages">
@@ -56,7 +56,7 @@
                     <div class="package-card ${pkg.is_featured ? 'featured' : ''}">
                         ${pkg.is_featured ? '<div class="badge">EN POPÜLER</div>' : ''}
                         <div class="package-image">
-                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" onerror="this.src='/placeholder.jpg'">
+                            <img src="${pkg.cover_image ? '/media/' + pkg.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" alt="${pkg.name}" onerror="this.style.display='none'">
                         </div>
                         <div class="package-body">
                             <span class="package-category">${pkg.category}</span>

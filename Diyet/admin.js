@@ -58,31 +58,29 @@ async function loadPackages() {
                 <td>${pkg.duration || '-'}</td>
                 <td>₺${pkg.price}</td>
                 <td>${pkg.is_active ? '<span class="badge-success">Aktif</span>' : '<span class="badge-danger">Pasif</span>'}</td>
-                <td>
-                    <button class="btn btn-secondary" onclick="deletePackage(${pkg.id})">Sil</button>
-                </td>
+                <td><button class="btn btn-secondary" onclick="deletePackage(${pkg.id})">Sil</button></td>
             </tr>
         `).join('');
     } catch (e) { showToast(e.message, 'error'); }
 }
 
 function openPackageModal() {
-    document.getElementById('packageModalTitle').textContent = 'Yeni Paket';
     document.getElementById('packageForm').reset();
-    document.getElementById('coverImageInput').value = '';
     document.getElementById('packagePreview').style.display = 'none';
+    document.getElementById('packageCoverInput').value = '';
     openModal('packageModal');
 }
 
-function previewImage(input, previewId) {
+function previewImage(input, previewId, hiddenId) {
     const file = input.files[0];
     const preview = document.getElementById(previewId);
+    const hidden = document.getElementById(hiddenId);
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
             preview.src = e.target.result;
             preview.style.display = 'block';
-            document.getElementById('coverImageInput').value = e.target.result;
+            hidden.value = e.target.result;
         };
         reader.readAsDataURL(file);
     }
@@ -105,7 +103,7 @@ async function createPackage(event) {
     };
     try {
         await adminApi.createPackage(data);
-        showToast('Paket başarıyla oluşturuldu.', 'success');
+        showToast('Paket oluşturuldu.', 'success');
         closeModal('packageModal');
         loadPackages();
     } catch (e) { showToast(e.message, 'error'); }
@@ -123,9 +121,10 @@ async function loadEvents() {
     if (!container) return;
     try {
         const events = await adminApi.getEvents();
-        if (!events.length) { container.innerHTML = '<tr><td colspan="6">Henüz etkinlik yok.</td></tr>'; return; }
+        if (!events.length) { container.innerHTML = '<tr><td colspan="7">Henüz etkinlik yok.</td></tr>'; return; }
         container.innerHTML = events.map(ev => `
             <tr>
+                <td><img src="${ev.cover_image ? '/media/' + ev.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
                 <td>${ev.title}</td>
                 <td>${ev.event_date}</td>
                 <td>${ev.event_time || '-'}</td>
@@ -134,6 +133,36 @@ async function loadEvents() {
                 <td><button class="btn btn-secondary" onclick="deleteEvent(${ev.id})">Sil</button></td>
             </tr>
         `).join('');
+    } catch (e) { showToast(e.message, 'error'); }
+}
+
+function openEventModal() {
+    document.getElementById('eventForm').reset();
+    document.getElementById('eventPreview').style.display = 'none';
+    document.getElementById('eventCoverInput').value = '';
+    openModal('eventModal');
+}
+
+async function createEvent(event) {
+    event.preventDefault();
+    const form = document.getElementById('eventForm');
+    const data = {
+        title: form.title.value,
+        description: form.description.value,
+        event_date: form.event_date.value,
+        event_time: form.event_time.value,
+        location: form.location.value,
+        is_online: form.is_online.value === 'true',
+        capacity: form.capacity.value ? parseInt(form.capacity.value) : null,
+        registration_link: form.registration_link.value,
+        cover_image: form.cover_image.value || null,
+        is_active: form.is_active.checked
+    };
+    try {
+        await adminApi.createEvent(data);
+        showToast('Etkinlik oluşturuldu.', 'success');
+        closeModal('eventModal');
+        loadEvents();
     } catch (e) { showToast(e.message, 'error'); }
 }
 
@@ -149,9 +178,10 @@ async function loadBlogPosts() {
     if (!container) return;
     try {
         const posts = await adminApi.getBlogPosts();
-        if (!posts.length) { container.innerHTML = '<tr><td colspan="5">Henüz blog yazısı yok.</td></tr>'; return; }
+        if (!posts.length) { container.innerHTML = '<tr><td colspan="6">Henüz blog yazısı yok.</td></tr>'; return; }
         container.innerHTML = posts.map(post => `
             <tr>
+                <td><img src="${post.cover_image ? '/media/' + post.cover_image.replace(/^\/?/, '') : '/placeholder.jpg'}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"></td>
                 <td>${post.title}</td>
                 <td>${post.category || '-'}</td>
                 <td>${post.author || '-'}</td>
@@ -159,6 +189,33 @@ async function loadBlogPosts() {
                 <td><button class="btn btn-secondary" onclick="deleteBlogPost(${post.id})">Sil</button></td>
             </tr>
         `).join('');
+    } catch (e) { showToast(e.message, 'error'); }
+}
+
+function openBlogModal() {
+    document.getElementById('blogForm').reset();
+    document.getElementById('blogPreview').style.display = 'none';
+    document.getElementById('blogCoverInput').value = '';
+    openModal('blogModal');
+}
+
+async function createBlogPost(event) {
+    event.preventDefault();
+    const form = document.getElementById('blogForm');
+    const data = {
+        title: form.title.value,
+        category: form.category.value,
+        author: form.author.value,
+        summary: form.summary.value,
+        content: form.content.value,
+        cover_image: form.cover_image.value || null,
+        is_active: form.is_active.checked
+    };
+    try {
+        await adminApi.createBlogPost(data);
+        showToast('Blog yazısı oluşturuldu.', 'success');
+        closeModal('blogModal');
+        loadBlogPosts();
     } catch (e) { showToast(e.message, 'error'); }
 }
 
@@ -183,10 +240,7 @@ async function loadApplications() {
                 <td>${a.goal || '-'}</td>
                 <td>${a.status}</td>
                 <td>${new Date(a.created_at).toLocaleDateString('tr-TR')}</td>
-                <td>
-                    <button class="btn btn-secondary" onclick="updateApplicationStatus(${a.id}, 'Onaylandı')">Onayla</button>
-                    <button class="btn btn-secondary" onclick="deleteApplication(${a.id})">Sil</button>
-                </td>
+                <td><button class="btn btn-secondary" onclick="updateApplicationStatus(${a.id}, 'Onaylandı')">Onayla</button> <button class="btn btn-secondary" onclick="deleteApplication(${a.id})">Sil</button></td>
             </tr>
         `).join('');
     } catch (e) { showToast(e.message, 'error'); }
@@ -218,10 +272,7 @@ async function loadAppointments() {
                 <td>${a.service || '-'}</td>
                 <td>${a.status}</td>
                 <td>${a.email || '-'}</td>
-                <td>
-                    <button class="btn btn-secondary" onclick="updateAppointmentStatus(${a.id}, 'Onaylandı')">Onayla</button>
-                    <button class="btn btn-secondary" onclick="deleteAppointment(${a.id})">Sil</button>
-                </td>
+                <td><button class="btn btn-secondary" onclick="updateAppointmentStatus(${a.id}, 'Onaylandı')">Onayla</button> <button class="btn btn-secondary" onclick="deleteAppointment(${a.id})">Sil</button></td>
             </tr>
         `).join('');
     } catch (e) { showToast(e.message, 'error'); }
@@ -309,10 +360,8 @@ async function saveSettings(event) {
         email: form.email.value,
         about_text: form.about_text.value
     };
-    try {
-        await adminApi.updateSiteSettings(data);
-        showToast('Ayarlar kaydedildi.', 'success');
-    } catch (e) { showToast(e.message, 'error'); }
+    try { await adminApi.updateSiteSettings(data); showToast('Ayarlar kaydedildi.', 'success'); }
+    catch (e) { showToast(e.message, 'error'); }
 }
 
 // ---------- SOSYAL MEDYA ----------
@@ -341,8 +390,6 @@ async function saveSocialLinks(event) {
         whatsapp: form.whatsapp.value,
         email: form.email.value
     };
-    try {
-        await adminApi.updateSocialLinks(data);
-        showToast('Sosyal linkler kaydedildi.', 'success');
-    } catch (e) { showToast(e.message, 'error'); }
+    try { await adminApi.updateSocialLinks(data); showToast('Sosyal linkler kaydedildi.', 'success'); }
+    catch (e) { showToast(e.message, 'error'); }
 }
